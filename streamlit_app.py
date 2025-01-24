@@ -15,29 +15,44 @@ st.set_page_config(
 # -----------------------------------------------------------------------------
 # 최근 50개 position history 내역
 # @st.cache_data(ttl='1h')
-def load_trading_data():  # 캐시 함수는 순수 데이터 처리만 담당
+def load_trading_data():
     DATA_FILENAME = Path(__file__).parent/'data/recent_trades.csv'
     df = pd.read_csv(DATA_FILENAME)
-    return df[['심볼', '시간', '매매방향', '가격', '실현손익']]  # 필터링된 데이터프레임 반환
+    
+    # 1. 진입/청산 컬럼 추가
+    df['진입/청산'] = df['실현손익'].apply(
+        lambda x: '진입' if x == 0 else '청산'
+    )
+    
+    # 2. 수량 컬럼 포함하여 반환
+    return df[['심볼', '시간', '매매방향', '가격', '수량', '진입/청산', '실현손익']]
 
-def show_trading_dashboard():  # 캐시 데코레이터 제거
+def show_trading_dashboard():
     st.write('📈 실시간 거래 현황')
     
     try:
-        display_df = load_trading_data()  # 캐시된 데이터 로드
+        display_df = load_trading_data()
         
-        # 1. 스타일 적용
+        # 매매방향 색상 스타일링
         def style_direction(val):
             color = 'green' if val == 'BUY' else 'red'
-            return f'color: {color}'
-        
-        styled_df = display_df.style.applymap(style_direction, subset=['매매방향'])
+            return f'color: {color}; font-weight: bold'
 
-        # 2. 데이터 표시
+        styled_df = display_df.style.applymap(
+            style_direction, 
+            subset=['매매방향']
+        )
+
+        # 데이터프레임 표시 설정
         st.subheader("최근 50건 포지션 내역")
         st.dataframe(
-            styled_df,  # 스타일 적용된 데이터프레임 사용
+            styled_df,
             column_config={
+                "수량": st.column_config.NumberColumn(
+                    label="거래 수량",
+                    format="%.4f",
+                    help="해당 심볼의 거래 수량"
+                ),
                 "실현손익": st.column_config.NumberColumn(
                     label="실현손익 (USDT)",
                     format="%.4f",
@@ -45,11 +60,12 @@ def show_trading_dashboard():  # 캐시 데코레이터 제거
                 )
             },
             hide_index=True,
-            use_container_width=True
+            use_container_width=True,
+            height=600  # 표 높이 조정
         )
         
     except FileNotFoundError:
-        st.error("거래 데이터를 찾을 수 없습니다. 먼저 데이터 수집 스크립트를 실행해주세요.")
+        st.error("거래 데이터를 찾을 수 없습니다.")
 
 # -----------------------------------------------------------------------------
 # 데이터 로드 함수
