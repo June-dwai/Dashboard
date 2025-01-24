@@ -14,7 +14,7 @@ st.set_page_config(
 
 # -----------------------------------------------------------------------------
 # 최근 50개 position history 내역
-@st.cache_data(ttl='1h')
+# @st.cache_data(ttl='1h')
 def load_trading_data():  # 캐시 함수는 순수 데이터 처리만 담당
     DATA_FILENAME = Path(__file__).parent/'data/recent_trades.csv'
     df = pd.read_csv(DATA_FILENAME)
@@ -53,8 +53,7 @@ def show_trading_dashboard():  # 캐시 데코레이터 제거
 
 # -----------------------------------------------------------------------------
 # 데이터 로드 함수
-
-@st.cache_data(ttl='1h')
+# @st.cache_data(ttl='1h')
 def get_trading_data():
     """트레이딩 데이터를 CSV에서 읽어오는 함수"""
     DATA_FILENAME = Path(__file__).parent/'data/daily_report.csv'
