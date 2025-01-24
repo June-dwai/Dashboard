@@ -1,19 +1,4 @@
-# 🎈 Blank app template
+## :chart_with_upwards_trend: Algorithmic Trading Dashboard
 
-A simple Streamlit app template for you to modify!
+A simple Streamlit app showing the algorithmic trading in dashboard
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
-
-### How to run it on your own machine
-
-1. Install the requirements
-
-   ```
-   $ pip install -r requirements.txt
-   ```
-
-2. Run the app
-
-   ```
-   $ streamlit run streamlit_app.py
-   ```
