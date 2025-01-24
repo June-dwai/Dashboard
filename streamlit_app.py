@@ -44,7 +44,7 @@ def show_trading_dashboard():
         )
 
         # 데이터프레임 표시 설정
-        st.subheader("최근 50건 포지션 내역")
+        st.subheader("최근 50건 거래 내역")
         st.dataframe(
             styled_df,
             column_config={
