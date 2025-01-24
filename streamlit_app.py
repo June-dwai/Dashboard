@@ -73,52 +73,6 @@ def get_trading_data():
 trading_df = get_trading_data()
 
 # -----------------------------------------------------------------------------
-# 바이낸스에서 잔고 및 포지션 가져오는 함수
-
-def get_account_balance_and_position():
-    """잔고와 포지션 정보를 DataFrame으로 반환 (한국어 컬럼)"""
-    try:
-        # 계좌 잔고 데이터 수집
-        account_balance = client.futures_account_balance()
-        balance_data = []
-        
-        for item in account_balance:
-            asset = item["asset"]
-            balance = float(item["balance"])
-            if balance > 0:
-                balance_data.append({
-                    "자산": asset,
-                    "보유량": balance,
-                    "USDT 환산": balance if asset == "USDT" else None
-                })
-        
-        balance_df = pd.DataFrame(balance_data)
-
-        # 포지션 데이터 수집
-        positions = client.futures_position_information()
-        position_data = []
-        
-        for position in positions:
-            if float(position["positionAmt"]) != 0:
-                position_data.append({
-                    "심볼": position['symbol'],
-                    "포지션 수량": float(position['positionAmt']),
-                    "방향": "롱" if float(position['positionAmt']) > 0 else "숏",
-                    "진입 가격": float(position['entryPrice']),
-                    "손익분기점": float(position['breakEvenPrice']),
-                    "현재 가격": float(position['markPrice']),
-                    "미실현 손익": float(position['unRealizedProfit']),
-                    "레버리지": int(position['leverage'])
-                })
-                
-        position_df = pd.DataFrame(position_data)
-        return balance_df, position_df
-
-    except Exception as e:
-        print(f"오류 발생: {e}")
-        return pd.DataFrame(), pd.DataFrame()
-
-# -----------------------------------------------------------------------------
 # 페이지 헤더
 '''
 ## :chart_with_upwards_trend: Horong Algorithmic Trading Dashboard
