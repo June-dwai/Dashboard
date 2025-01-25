@@ -28,7 +28,7 @@ def load_trading_data():
     return df[['심볼', '시간', '매매방향', '가격', '수량', '진입/청산', '실현손익']]
 
 def show_trading_dashboard():
-    st.write('📈 실시간 거래 현황 (최근 거래내역 50건')
+    st.write('📈 실시간 거래 현황 (최근 거래내역 50건)')
     
     try:
         display_df = load_trading_data()
@@ -140,7 +140,7 @@ with col2:
              f"{btc_return:.2f}%", 
              delta_color="off")
 with col3:
-    st.metric("알파 수익", 
+    st.metric("알파 수익 (BTC 대비)", 
              f"{alpha:.2f}%", 
              delta_color="normal" if alpha > 0 else "inverse")
 with col4:
