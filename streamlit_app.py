@@ -7,7 +7,7 @@ import altair as alt
 
 # 페이지 기본 설정
 st.set_page_config(
-    page_title='Horong Algorithmic Trading',
+    page_title='호롱의 대시보드',
     page_icon=':chart_with_upwards_trend:',
     layout='wide'
 )
@@ -89,7 +89,7 @@ trading_df = get_trading_data()
 # -----------------------------------------------------------------------------
 # 페이지 헤더
 '''
-## :chart_with_upwards_trend: Horong Algorithmic Trading Dashboard
+## :chart_with_upwards_trend: 호롱의 자동매매 대시보드
 
 호롱의 **실시간 자동매매 현황**을 확인하세요.  
 알고리즘 기반 거래 내역이 매일 자동 업데이트됩니다.
