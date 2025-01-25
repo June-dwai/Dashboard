@@ -14,7 +14,7 @@ st.set_page_config(
 
 # -----------------------------------------------------------------------------
 # 최근 50개 position history 내역
-# @st.cache_data(ttl='1h')
+# @st.cache_data(ttl='1h')   # 이거 넣으면 streamlit 자동업데이트가 안 된다. 설마 1시간 마다 업데이트 되나 이러면?
 def load_trading_data():
     DATA_FILENAME = Path(__file__).parent/'data/recent_trades.csv'
     df = pd.read_csv(DATA_FILENAME)
@@ -28,7 +28,7 @@ def load_trading_data():
     return df[['심볼', '시간', '매매방향', '가격', '수량', '진입/청산', '실현손익']]
 
 def show_trading_dashboard():
-    st.write('📈 실시간 거래 현황')
+    st.write('📈 실시간 거래 현황 (최근 거래내역 50건')
     
     try:
         display_df = load_trading_data()
@@ -44,7 +44,6 @@ def show_trading_dashboard():
         )
 
         # 데이터프레임 표시 설정
-        st.subheader("최근 50건 거래 내역")
         st.dataframe(
             styled_df,
             column_config={
