@@ -67,6 +67,42 @@ def show_trading_dashboard():
         st.error("거래 데이터를 찾을 수 없습니다.")
 
 # -----------------------------------------------------------------------------
+# 포지션 로드 함수
+def display_positions():
+    try:
+        DATA_FILENAME = Path(__file__).parent/'data/positions.csv'
+        df = pd.read_csv(DATA_FILENAME)
+        
+        # 숫자 형식 지정
+        format_dict = {
+            'Entry Price': '{:.4f}',
+            'Break Even Price': '{:.4f}',
+            'Current Price': '{:.4f}',
+            'Unrealized P&L': '{:.4f}'
+        }
+        
+        st.subheader("📊 현재 포지션 현황")
+        st.dataframe(
+            df.style.format(format_dict),
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "Symbol": "심볼",
+                "Position": st.column_config.NumberColumn("수량", format="%.3f"),
+                "Side": "방향",
+                "Entry Price": st.column_config.NumberColumn("진입가격", format="%.4f"),
+                "Break Even Price": st.column_config.NumberColumn("손익분기점", format="%.4f"),
+                "Current Price": st.column_config.NumberColumn("현재가격", format="%.4f"),
+                "Unrealized P&L": st.column_config.NumberColumn("미실현손익", format="%.4f")
+            }
+        )
+        
+    except FileNotFoundError:
+        st.warning("포지션 정보 파일을 찾을 수 없습니다.")
+    except Exception as e:
+        st.error(f"포지션 정보 표시 중 오류 발생: {str(e)}")
+
+# -----------------------------------------------------------------------------
 # 데이터 로드 함수
 # @st.cache_data(ttl='1h')
 def get_trading_data():
@@ -242,6 +278,11 @@ with tab4:
 # 포지션 히스토리 섹션 (탭 아래 독립된 공간)
 st.write("---")  # 구분선 추가
 show_trading_dashboard()  # 함수 호출 위치 변경
+
+# -----------------------------------------------------------------------------
+# 포지션 히스토리 섹션 (탭 아래 독립된 공간)
+st.write("---")  # 구분선 추가
+display_positions()  # 함수 호출 위치 변경
 
 # -----------------------------------------------------------------------------
 # 경고문
