@@ -245,15 +245,21 @@ with tab2:
     st.altair_chart(combined_chart, use_container_width=True)  # 수정된 부분
 
 with tab3:
-    # 조건부 색상 적용 일간 수익률 바 차트
-    st.bar_chart(
-        filtered_df,
-        x='Date',
+    # Altair를 사용한 조건부 색상 바 차트
+    chart = alt.Chart(filtered_df).mark_bar().encode(
+        x='Date:N',  # N: Nominal type (범주형 처리)
         y='Delta(%)',
-        color=['#00FF00' if delta > 0 else '#FF4B4B' for delta in filtered_df['Delta(%)']],
+        color=alt.condition(
+            alt.datum['Delta(%)'] > 0,
+            alt.value('#00FF00'),  # 양수일 때 색상
+            alt.value('#FF4B4B')   # 음수일 때 색상
+        )
+    ).properties(
         height=500
     )
-
+    
+    st.altair_chart(chart, use_container_width=True)
+    
 with tab4:
     # 데이터프레임 스타일링
     column_mapping = {
