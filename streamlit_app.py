@@ -245,12 +245,12 @@ with tab2:
     st.altair_chart(combined_chart, use_container_width=True)  # 수정된 부분
 
 with tab3:
-    # 일간 수익률 바 차트 (빨강)
+    # 조건부 색상 적용 일간 수익률 바 차트
     st.bar_chart(
         filtered_df,
         x='Date',
         y='Delta(%)',
-        color='#FF4B4B',  # 초록(#00FF00) → 빨강(#FF4B4B)으로 변경
+        color=['#00FF00' if delta > 0 else '#FF4B4B' for delta in filtered_df['Delta(%)']],
         height=500
     )
 
