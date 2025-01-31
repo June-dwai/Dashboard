@@ -261,23 +261,35 @@ with tab2:
     st.altair_chart(combined_chart, use_container_width=True)  # 수정된 부분
 
 with tab3:
-    # Altair를 사용한 조건부 색상 바 차트
+    # 일간 수익(USDT)를 막대그래프로 표시
     chart = alt.Chart(filtered_df[1:]).mark_bar().encode(
-        x='Date:N',  # N: Nominal type (범주형 처리)
-        y='Delta(%)',
+        x=alt.X('Date:N', title='Date'),  # 범주형
+        y=alt.Y('Delta(USDT):Q', title='Daily P&L (USDT)'),
         color=alt.condition(
-            alt.datum['Delta(%)'] > 0,
-            alt.value('#00FF00'),  # 양수일 때 색상
-            alt.value('#FF4B4B')   # 음수일 때 색상
+            alt.datum['Delta(USDT)'] > 0,
+            alt.value('#00FF00'),  # 양수일 때 초록
+            alt.value('#FF4B4B')   # 음수일 때 빨강
         )
-    ).properties(
-        height=500
-    )
+    ).properties(height=500)
     
     st.altair_chart(chart, use_container_width=True)
-    
+
+
 with tab4:
-    # 데이터프레임 스타일링
+    chart = alt.Chart(filtered_df[1:]).mark_bar().encode(
+        x=alt.X('Date:N', title='Date'),    # 범주형
+        y=alt.Y('Delta(%)', title='Daily Return (%)'),
+        color=alt.condition(
+            alt.datum['Delta(%)'] > 0,
+            alt.value('#00FF00'),  # 양수일 때 초록
+            alt.value('#FF4B4B')   # 음수일 때 빨강
+        )
+    ).properties(height=500)
+    
+    st.altair_chart(chart, use_container_width=True)
+
+
+with tab5:
     column_mapping = {
         'Date': '거래일',
         'Weekday': '요일',
@@ -289,7 +301,9 @@ with tab4:
     }
     
     display_df = filtered_df[list(column_mapping.keys())].rename(columns=column_mapping)
+    # 분석 대상에서 첫 번째 행(0번)을 제외한 경우
     display_df = display_df[1:]
+    
     st.dataframe(
         display_df.style.format({
             '시작 자산': '{:,.0f}',
@@ -301,7 +315,6 @@ with tab4:
         height=500,
         use_container_width=True
     )
-  
 
 # -----------------------------------------------------------------------------
 # 포지션 히스토리 섹션 (탭 아래 독립된 공간)
