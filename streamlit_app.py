@@ -175,8 +175,8 @@ filtered_df = trading_df[
 ]
 
 # 동적 지표 계산
-base_portfolio = filtered_df.iloc[0]['End(USDT)']
-base_btc = filtered_df.iloc[0]['Market End(USDT)']
+base_portfolio = filtered_df.iloc[0]['Start(USDT)']
+base_btc = filtered_df.iloc[0]['Market Start(USDT)']
 
 current_portfolio = filtered_df.iloc[-1]['End(USDT)']
 current_btc = filtered_df.iloc[-1]['Market End(USDT)']
