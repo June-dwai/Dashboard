@@ -202,7 +202,7 @@ with col3:
              delta_color="normal" if alpha > 0 else "inverse")
 with col4:
     st.metric("평균 일수익", 
-             f"{filtered_df['Delta(%)'].mean():.2f}%")
+             f"{filtered_df[1:]['Delta(%)'].mean():.2f}%")
 
 st.divider()
 
