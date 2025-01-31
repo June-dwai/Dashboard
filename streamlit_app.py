@@ -29,21 +29,37 @@ def load_trading_data():
 
 def show_trading_dashboard():
     st.subheader('📈 실시간 거래 현황 (최근 거래내역 50건)')
-    
+
     try:
         display_df = load_trading_data()
-        
-        # 매매방향 색상 스타일링
-        def style_direction(val):
-            color = 'green' if val == 'BUY' else 'red'
-            return f'color: {color}; font-weight: bold'
 
-        styled_df = display_df.style.applymap(
-            style_direction, 
-            subset=['매매방향']
+        # 1) 매매방향 색상 스타일링 함수
+        def style_direction(val):
+            if val == 'BUY':
+                return 'color: green; font-weight: bold'
+            elif val == 'SELL':
+                return 'color: red; font-weight: bold'
+            else:
+                return ''
+
+        # 2) 실현손익 색상 스타일링 함수
+        def style_realized_pnl(val):
+            if val > 0:
+                return 'color: green; font-weight: bold'
+            elif val < 0:
+                return 'color: red; font-weight: bold'
+            else:
+                # 0일 때는 색상 지정 없음
+                return ''
+
+        # style 체이닝
+        styled_df = (
+            display_df.style
+            .applymap(style_direction, subset=['매매방향'])
+            .applymap(style_realized_pnl, subset=['실현손익'])
         )
 
-        # 데이터프레임 표시 설정
+        # 데이터프레임 표시
         st.dataframe(
             styled_df,
             column_config={
@@ -62,7 +78,7 @@ def show_trading_dashboard():
             use_container_width=True,
             height=600  # 표 높이 조정
         )
-        
+
     except FileNotFoundError:
         st.error("거래 데이터를 찾을 수 없습니다.")
 
