@@ -175,8 +175,8 @@ filtered_df = trading_df[
 ]
 
 # 동적 지표 계산
-base_portfolio = filtered_df.iloc[0]['Start(USDT)']
-base_btc = filtered_df.iloc[0]['Market Start(USDT)']
+base_portfolio = filtered_df.iloc[1]['Start(USDT)']
+base_btc = filtered_df.iloc[1]['Market Start(USDT)']
 
 current_portfolio = filtered_df.iloc[-1]['End(USDT)']
 current_btc = filtered_df.iloc[-1]['Market End(USDT)']
@@ -262,7 +262,7 @@ with tab2:
 
 with tab3:
     # Altair를 사용한 조건부 색상 바 차트
-    chart = alt.Chart(filtered_df).mark_bar().encode(
+    chart = alt.Chart(filtered_df[1:]).mark_bar().encode(
         x='Date:N',  # N: Nominal type (범주형 처리)
         y='Delta(%)',
         color=alt.condition(
@@ -289,6 +289,7 @@ with tab4:
     }
     
     display_df = filtered_df[list(column_mapping.keys())].rename(columns=column_mapping)
+    display_df = display_df[1:]
     st.dataframe(
         display_df.style.format({
             '시작 자산': '{:,.0f}',
