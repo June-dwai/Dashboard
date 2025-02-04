@@ -185,6 +185,10 @@ portfolio_return = ((current_portfolio - base_portfolio)/base_portfolio)*100
 btc_return = ((current_btc - base_btc)/base_btc)*100
 alpha = portfolio_return - btc_return
 
+# 기하평균을 이용한 평균 일수익 계산
+daily_returns = filtered_df[1:]['Delta(%)'] / 100  # 백분율을 소수로 변환
+geometric_mean_return = (daily_returns + 1).prod() ** (1 / len(daily_returns)) - 1
+
 # 메트릭 레이아웃
 col1, col2, col3, col4 = st.columns(4)
 with col1:
@@ -201,8 +205,8 @@ with col3:
              f"{alpha:.2f}%", 
              delta_color="normal" if alpha > 0 else "inverse")
 with col4:
-    st.metric("평균 일수익", 
-             f"{filtered_df[1:]['Delta(%)'].mean():.2f}%")
+    st.metric("평균 일수익 ", 
+             f"{geometric_mean_return * 100:.2f}%")
 
 st.divider()
 
