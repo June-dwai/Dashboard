@@ -86,9 +86,9 @@ def show_trading_dashboard():
 # 포지션 로드 함수
 def display_positions():
     try:
-        DATA_FILENAME = Path(__file__).parent/'data/positions.csv'
+        DATA_FILENAME = Path(__file__).parent / 'data/positions.csv'
         df = pd.read_csv(DATA_FILENAME)
-        
+
         # 숫자 형식 지정
         format_dict = {
             'Entry Price': '{:.4f}',
@@ -96,10 +96,33 @@ def display_positions():
             'Current Price': '{:.4f}',
             'Unrealized P&L': '{:.4f}'
         }
-        
+
+        # 매매방향 색상 스타일링 함수
+        def style_direction(val):
+            if val == 'LONG':
+                return 'color: green; font-weight: bold'
+            elif val == 'SHORT':
+                return 'color: red; font-weight: bold'
+            else:
+                return ''
+
+        # 미실현 손익 색상 스타일링 함수
+        def style_unrealized_pnl(val):
+            if val > 0:
+                return 'color: green; font-weight: bold'
+            elif val < 0:
+                return 'color: red; font-weight: bold'
+            else:
+                return ''
+
+        # 스타일 적용
+        styled_df = df.style.format(format_dict)
+        styled_df = styled_df.applymap(style_direction, subset=['Side'])
+        styled_df = styled_df.applymap(style_unrealized_pnl, subset=['Unrealized P&L'])
+
         st.subheader("📊 현재 포지션 현황")
         st.dataframe(
-            df.style.format(format_dict),
+            styled_df,
             use_container_width=True,
             hide_index=True,
             column_config={
@@ -112,7 +135,7 @@ def display_positions():
                 "Unrealized P&L": st.column_config.NumberColumn("미실현손익", format="%.4f")
             }
         )
-        
+
     except FileNotFoundError:
         st.warning("포지션 정보 파일을 찾을 수 없습니다.")
     except Exception as e:
