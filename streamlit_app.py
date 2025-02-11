@@ -99,9 +99,9 @@ def display_positions():
 
         # 매매방향 색상 스타일링 함수
         def style_direction(val):
-            if val == 'LONG':
+            if val == 'Long':
                 return 'color: green; font-weight: bold'
-            elif val == 'SHORT':
+            elif val == 'Short':
                 return 'color: red; font-weight: bold'
             else:
                 return ''
