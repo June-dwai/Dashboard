@@ -84,18 +84,26 @@ def show_trading_dashboard():
 
 # -----------------------------------------------------------------------------
 # 포지션 로드 함수
+from pathlib import Path
+import pandas as pd
+import streamlit as st
+
 def display_positions():
     try:
         DATA_FILENAME = Path(__file__).parent / 'data/positions.csv'
         
-        # 파일이 존재하지 않거나 파일 크기가 0이면 빈 상태로 처리
+        # 파일이 존재하지 않거나 파일 크기가 0이면 안내 메시지 출력
         if not DATA_FILENAME.exists() or DATA_FILENAME.stat().st_size == 0:
             st.info("현재 오픈 포지션이 없습니다.")
             return
         
-        df = pd.read_csv(DATA_FILENAME)
-        
-        # 파일은 존재하지만 DataFrame이 비어있는 경우
+        try:
+            df = pd.read_csv(DATA_FILENAME)
+        except pd.errors.EmptyDataError:
+            st.info("현재 오픈 포지션이 없습니다.")
+            return
+
+        # DataFrame이 비어있는 경우에도 처리
         if df.empty:
             st.info("현재 오픈 포지션이 없습니다.")
             return
@@ -151,6 +159,7 @@ def display_positions():
         st.warning("포지션 정보 파일을 찾을 수 없습니다.")
     except Exception as e:
         st.error(f"포지션 정보 표시 중 오류 발생: {str(e)}")
+
 
 # -----------------------------------------------------------------------------
 # 데이터 로드 함수
