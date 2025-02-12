@@ -87,7 +87,18 @@ def show_trading_dashboard():
 def display_positions():
     try:
         DATA_FILENAME = Path(__file__).parent / 'data/positions.csv'
+        
+        # 파일이 존재하지 않거나 파일 크기가 0이면 빈 상태로 처리
+        if not DATA_FILENAME.exists() or DATA_FILENAME.stat().st_size == 0:
+            st.info("현재 오픈 포지션이 없습니다.")
+            return
+        
         df = pd.read_csv(DATA_FILENAME)
+        
+        # 파일은 존재하지만 DataFrame이 비어있는 경우
+        if df.empty:
+            st.info("현재 오픈 포지션이 없습니다.")
+            return
 
         # 숫자 형식 지정
         format_dict = {
