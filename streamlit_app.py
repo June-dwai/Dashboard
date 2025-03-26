@@ -360,19 +360,38 @@ with tab5:
         'Delta(%)': '수익률(%)',
         'Market End(USDT)': 'BTC 종가'
     }
-    
+
     display_df = filtered_df[list(column_mapping.keys())].rename(columns=column_mapping)
-    # 분석 대상에서 첫 번째 행(0번)을 제외한 경우
+    # 분석 대상에서 첫 번째 행(0번)을 제외
     display_df = display_df[1:]
-    
-    st.dataframe(
-        display_df.style.format({
+
+    # 1) 수익(USDT), 수익률(%) 컬럼 스타일링 함수
+    def style_profit(val):
+        """
+        0 이상이면 초록색, 0 미만이면 빨간색으로 표시
+        """
+        if val >= 0:
+            return 'color: green; font-weight: bold;'
+        else:
+            return 'color: red; font-weight: bold;'
+
+    # 2) Styler 체이닝
+    styled_display_df = (
+        display_df.style
+        # 먼저 스타일 함수 적용(데이터가 숫자일 때 비교)
+        .applymap(style_profit, subset=['수익(USDT)', '수익률(%)'])
+        # 이후 숫자 서식 적용
+        .format({
             '시작 자산': '{:,.0f}',
             '종료 자산': '{:,.0f}',
             '수익(USDT)': '{:,.0f}',
-            '수익률(%)': '{:.2f}%',
+            '수익률(%)': '{:.2f}%',   # 예: 5.00% 로 표시
             'BTC 종가': '{:,.0f}'
-        }),
+        })
+    )
+
+    st.dataframe(
+        styled_display_df,
         height=500,
         use_container_width=True
     )
