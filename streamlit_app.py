@@ -230,7 +230,7 @@ filtered_df = trading_df[
 base_portfolio = filtered_df.iloc[1]['Start(USDT)']
 base_btc = filtered_df.iloc[1]['Market Start(USDT)']
 
-current_portfolio = filtered_df.iloc[-1]['End(USDT)']
+current_portfolio = filtered_df.iloc[-1]['Sum(USDT)']
 current_btc = filtered_df.iloc[-1]['Market End(USDT)']
 
 portfolio_return = ((current_portfolio - base_portfolio)/base_portfolio)*100
@@ -304,22 +304,50 @@ with tab1:
     ).properties(height=500)
     st.altair_chart(chart, use_container_width=True)
 
-with tab2:
-    comparison_df = filtered_df.copy()
-    comparison_df['포트폴리오'] = ((comparison_df['End(USDT)'] - base_portfolio)/base_portfolio)*100
-    comparison_df['BTC'] = ((comparison_df['Market End(USDT)'] - base_btc)/base_btc)*100
+# with tab2:
+#     comparison_df = filtered_df.copy()
+#     comparison_df['포트폴리오'] = ((comparison_df['End(USDT)'] - base_portfolio)/base_portfolio)*100
+#     comparison_df['BTC'] = ((comparison_df['Market End(USDT)'] - base_btc)/base_btc)*100
     
+#     portfolio_chart = alt.Chart(comparison_df).mark_line(color='#FF4B4B').encode(
+#         x='Datetime:T',
+#         y='포트폴리오:Q'
+#     )
+#     btc_chart = alt.Chart(comparison_df).mark_line(color='#00FF00').encode(
+#         x='Datetime:T',
+#         y='BTC:Q'
+#     )
+    
+#     combined_chart = (portfolio_chart + btc_chart).resolve_scale(y='shared').properties(height=500)
+#     st.altair_chart(combined_chart, use_container_width=True)  # 수정된 부분
+    
+with tab2:
+    # filtered_df: 슬라이더로 선택한 날짜 범위에 따라 필터링 된 데이터프레임
+
+    # CSV 파일에서 계산된 컬럼 사용: 
+    #   - 포트폴리오 퍼센티지는 "Percentage(%)" 컬럼
+    #   - BTC 퍼센티지는 "Market(%)" 컬럼
+
+    # 비교 데이터를 위한 복사본 생성 (필요시 추가 데이터 처리 가능)
+    comparison_df = filtered_df.copy()
+    
+    # 컬럼명 그대로 사용 (이미 백분율 값들이 있으므로 단위 변환 없이 사용)
+    # 만약 컬럼 이름이 다르다면, 아래와 같이 rename할 수 있습니다.
+    # comparison_df.rename(columns={'Percentage(%)': '포트폴리오', 'Market(%)': 'BTC'}, inplace=True)
+    
+    # 여기서는 컬럼명을 그대로 사용할 경우
     portfolio_chart = alt.Chart(comparison_df).mark_line(color='#FF4B4B').encode(
         x='Datetime:T',
-        y='포트폴리오:Q'
+        y=alt.Y('Percentage(%):Q', title='포트폴리오 수익률 (%)')
     )
     btc_chart = alt.Chart(comparison_df).mark_line(color='#00FF00').encode(
         x='Datetime:T',
-        y='BTC:Q'
+        y=alt.Y('Market(%):Q', title='BTC 수익률 (%)')
     )
     
+    # 두 차트를 하나로 결합하고, 동일 y축 스케일을 적용
     combined_chart = (portfolio_chart + btc_chart).resolve_scale(y='shared').properties(height=500)
-    st.altair_chart(combined_chart, use_container_width=True)  # 수정된 부분
+    st.altair_chart(combined_chart, use_container_width=True)
 
 with tab3:
     # 일간 수익(USDT)를 막대그래프로 표시
