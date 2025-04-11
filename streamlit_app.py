@@ -323,29 +323,23 @@ with tab1:
     
 with tab2:
     # filtered_df: 슬라이더로 선택한 날짜 범위에 따라 필터링 된 데이터프레임
-
-    # CSV 파일에서 계산된 컬럼 사용: 
-    #   - 포트폴리오 퍼센티지는 "Percentage(%)" 컬럼
-    #   - BTC 퍼센티지는 "Market(%)" 컬럼
-
-    # 비교 데이터를 위한 복사본 생성 (필요시 추가 데이터 처리 가능)
     comparison_df = filtered_df.copy()
     
-    # 컬럼명 그대로 사용 (이미 백분율 값들이 있으므로 단위 변환 없이 사용)
-    # 만약 컬럼 이름이 다르다면, 아래와 같이 rename할 수 있습니다.
-    # comparison_df.rename(columns={'Percentage(%)': '포트폴리오', 'Market(%)': 'BTC'}, inplace=True)
-    
-    # 여기서는 컬럼명을 그대로 사용할 경우
-    portfolio_chart = alt.Chart(comparison_df).mark_line(color='#FF4B4B').encode(
-        x='Datetime:T',
-        y=alt.Y('Percentage(%):Q', title='포트폴리오 수익률 (%)')
+    # Altair의 transform_calculate를 이용하여, 각각의 컬럼에서 100을 빼는 새 필드를 만듭니다.
+    portfolio_chart = alt.Chart(comparison_df).transform_calculate(
+        portfolio_adjusted='datum["Percentage(%)"] - 100'
+    ).mark_line(color='#FF4B4B').encode(
+        x=alt.X('Datetime:T', title='Date'),
+        y=alt.Y('portfolio_adjusted:Q', title='포트폴리오 수익률 (%)')
     )
-    btc_chart = alt.Chart(comparison_df).mark_line(color='#00FF00').encode(
-        x='Datetime:T',
-        y=alt.Y('Market(%):Q', title='BTC 수익률 (%)')
+    btc_chart = alt.Chart(comparison_df).transform_calculate(
+        btc_adjusted='datum["Market(%)"] - 100'
+    ).mark_line(color='#00FF00').encode(
+        x=alt.X('Datetime:T', title='Date'),
+        y=alt.Y('btc_adjusted:Q', title='BTC 수익률 (%)')
     )
     
-    # 두 차트를 하나로 결합하고, 동일 y축 스케일을 적용
+    # 두 차트를 하나로 결합하고 동일 y축 스케일 적용
     combined_chart = (portfolio_chart + btc_chart).resolve_scale(y='shared').properties(height=500)
     st.altair_chart(combined_chart, use_container_width=True)
 
