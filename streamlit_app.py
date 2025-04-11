@@ -242,7 +242,7 @@ daily_returns = filtered_df[1:]['Delta(%)'] / 100  # 백분율을 소수로 변�
 geometric_mean_return = (daily_returns + 1).prod() ** (1 / len(daily_returns)) - 1
 
 # 메트릭 레이아웃
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
     st.metric(f"{start_date} → {end_date} 수익", 
              f"{current_portfolio:,.0f} USDT", 
@@ -259,6 +259,9 @@ with col3:
 with col4:
     st.metric("평균 일수익 ", 
              f"{geometric_mean_return * 100:.2f}%")
+with col5:
+    last_withdrawl = filtered_df.iloc[-1]['Withdrawl(USDT)']
+    st.metric("출금 금액", f"{last_withdrawl:,.0f} USDT")
 
 st.divider()
 
